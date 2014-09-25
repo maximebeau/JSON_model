@@ -168,7 +168,6 @@ window.onload = function() {
 	var canvas = document.getElementById("canvas_JSON");
 	initGL(canvas);
 	initShaders();
-	initBuffers();
 	loadModelFromJSON() ;
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);

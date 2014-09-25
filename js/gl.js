@@ -90,7 +90,7 @@ function initBuffers() {
 
 }
 
-function loadModel() {
+function loadModelFromJSON() {
         var request = new XMLHttpRequest();
         request.open("GET", "models/model.json");
         request.onreadystatechange = function () {

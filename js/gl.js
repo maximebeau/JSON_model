@@ -90,7 +90,50 @@ function initBuffers() {
 
 }
 
+function loadModel() {
+        var request = new XMLHttpRequest();
+        request.open("GET", "models/model.json");
+        request.onreadystatechange = function () {
+            if (request.readyState == 4) {
+                handleLoadedModel(JSON.parse(request.responseText));
+            }
+        }
+        request.send();
+    }
+	
+var modelVertexPositionBuffer;
+var modelVertexNormalBuffer;
+var modelVertexTextureCoordBuffer;
+var modelVertexIndexBuffer;
 
+function handleLoadedModel(modelData) {
+	modelVertexNormalBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexNormalBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(modelData.vertexNormals), gl.STATIC_DRAW);
+	modelVertexNormalBuffer.itemSize = 3;
+	modelVertexNormalBuffer.numItems = modelData.vertexNormals.length / 3;
+
+	modelVertexTextureCoordBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexTextureCoordBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(modelData.vertexTextureCoords), gl.STATIC_DRAW);
+	modelVertexTextureCoordBuffer.itemSize = 2;
+	modelVertexTextureCoordBuffer.numItems = modelData.vertexTextureCoords.length / 2;
+
+	modelVertexPositionBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexPositionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(modelData.vertexPositions), gl.STATIC_DRAW);
+	modelVertexPositionBuffer.itemSize = 3;
+	modelVertexPositionBuffer.numItems = modelData.vertexPositions.length / 3;
+
+	modelVertexIndexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, modelVertexIndexBuffer);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(modelData.indices), gl.STATIC_DRAW);
+	modelVertexIndexBuffer.itemSize = 1;
+	modelVertexIndexBuffer.numItems = modelData.indices.length;
+	
+	
+}
+	
 function drawScene() {
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -105,6 +148,7 @@ function webGLStart() {
 	initGL(canvas);
 	initShaders();
 	initBuffers();
+	loadModelFromJSON() ;
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);

@@ -134,7 +134,7 @@ function handleLoadedModel(modelData) {
 	
 }
 	
-window.onload = function() {
+function drawScene() {
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -165,7 +165,7 @@ window.onload = function() {
 
 
 
-function webGLStart() {
+window.onload = function() {
 	var canvas = document.getElementById("canvas_JSON");
 	initGL(canvas);
 	initShaders();

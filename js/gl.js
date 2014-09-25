@@ -81,15 +81,6 @@ function setMatrixUniforms() {
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 }
 
-
-
-var triangleVertexPositionBuffer;
-var squareVertexPositionBuffer;
-
-function initBuffers() {
-
-}
-
 function loadModelFromJSON() {
         var request = new XMLHttpRequest();
         request.open("GET", "models/model.json");

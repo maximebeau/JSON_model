@@ -163,9 +163,17 @@ function drawScene() {
 	gl.drawElements(gl.TRIANGLES, modelVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
+function animate() {
 
+}
 
-function webGLStart() {
+function tick() {
+	requestAnimFrame(tick);
+	drawScene();
+	animate();
+}
+
+window.onload = function() {
 	var canvas = document.getElementById("canvas_JSON");
 	initGL(canvas);
 	initShaders();
@@ -175,5 +183,5 @@ function webGLStart() {
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 
-	drawScene();
+	tick();
 }

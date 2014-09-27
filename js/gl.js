@@ -97,7 +97,7 @@ function initTextures() {
 	metalTexture.image.onload = function () {
 		handleLoadedTexture(metalTexture)
 	}
-	metalTexture.image.src = "textures/metal.jpg";
+	metalTexture.image.src = "textures/wood.jpg";
 }
 
 
@@ -139,7 +139,7 @@ function handleMouseMove(event) {
 	var newX = event.clientX;
 	var newY = event.clientY;
 
-	var deltaX = newX - lastMouseX
+	var deltaX = newX - lastMouseX ;
 	var newRotationMatrix = mat4.create();
 	mat4.identity(newRotationMatrix);
 	mat4.rotate(newRotationMatrix, degToRad(deltaX / 5), [0, 1, 0]);
@@ -153,10 +153,21 @@ function handleMouseMove(event) {
 	lastMouseY = newY;
 }
 
+var zoomMatrix = mat4.create();
+mat4.identity(zoomMatrix);
+function handleMouseScroll(event) 
+{    
+	var evt=window.event || event //equalize event object
+    var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta //check for detail first so Opera uses that instead of wheelDelta
+	
+	mat4.translate(zoomMatrix, [0, 0, delta / 120]);
+	event.preventDefault() ;
+}
+	
 
 function loadModelFromJSON() {
         var request = new XMLHttpRequest();
-        request.open("GET", "models/teapot.json");
+        request.open("GET", "models/model.json");
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 handleLoadedModel(JSON.parse(request.responseText));
@@ -213,6 +224,7 @@ function drawScene()
 	
 	mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, [0, 0, -45]);
+    mat4.multiply(mvMatrix, zoomMatrix);
     mat4.multiply(mvMatrix, modelRotationMatrix);
 
 	//Activate and bind textures
@@ -236,23 +248,9 @@ function drawScene()
 	gl.drawElements(gl.TRIANGLES, modelVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
-var lastTime = 0;
-
-function animate() {
-	var timeNow = new Date().getTime();
-	if (lastTime != 0) {
-		var elapsed = timeNow - lastTime;
-
-		modelAngle += 0.05 * elapsed;
-	}
-	lastTime = timeNow;
-}
-
-
 function tick() {
 	requestAnimFrame(tick);
 	drawScene();
-	animate();
 }
 
 window.onload = function() {
@@ -268,6 +266,13 @@ window.onload = function() {
 	canvas.onmousedown = handleMouseDown;
 	document.onmouseup = handleMouseUp;
 	document.onmousemove = handleMouseMove;
+	
+	var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
+	 
+	if (canvas.attachEvent) //if IE (and Opera depending on user setting)
+		canvas.attachEvent("on"+mousewheelevt, handleMouseScroll)
+	else if (canvas.addEventListener) //WC3 browsers
+		canvas.addEventListener(mousewheelevt, handleMouseScroll, false)
 
 	tick();
 }

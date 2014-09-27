@@ -101,6 +101,7 @@ function initTextures() {
 }
 
 
+
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 
@@ -108,6 +109,50 @@ function setMatrixUniforms() {
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 }
+
+
+function degToRad(degrees) 
+{
+	return degrees * Math.PI / 180;
+}
+var mouseDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
+
+var modelRotationMatrix = mat4.create();
+mat4.identity(modelRotationMatrix);
+
+function handleMouseDown(event) {
+	mouseDown = true;
+	lastMouseX = event.clientX;
+	lastMouseY = event.clientY;
+}
+
+function handleMouseUp(event) {
+	mouseDown = false;
+}
+
+function handleMouseMove(event) {
+	if (!mouseDown) {
+		return;
+	}
+	var newX = event.clientX;
+	var newY = event.clientY;
+
+	var deltaX = newX - lastMouseX
+	var newRotationMatrix = mat4.create();
+	mat4.identity(newRotationMatrix);
+	mat4.rotate(newRotationMatrix, degToRad(deltaX / 5), [0, 1, 0]);
+
+	var deltaY = newY - lastMouseY;
+	mat4.rotate(newRotationMatrix, degToRad(deltaY / 5), [1, 0, 0]);
+
+	mat4.multiply(newRotationMatrix, modelRotationMatrix, modelRotationMatrix);
+
+	lastMouseX = newX
+	lastMouseY = newY;
+}
+
 
 function loadModelFromJSON() {
         var request = new XMLHttpRequest();
@@ -151,7 +196,6 @@ function handleLoadedModel(modelData) {
 	modelVertexIndexBuffer.numItems = modelData.indices.length;
 }
 	
-	var modelAngle = 180 ;
 	
 function drawScene() 
 {
@@ -169,7 +213,7 @@ function drawScene()
 	
 	mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, [0, 0, -45]);
-    mat4.rotate(mvMatrix, Math.PI * (modelAngle / 180.0), [-1, 1, 1]);
+    mat4.multiply(mvMatrix, modelRotationMatrix);
 
 	//Activate and bind textures
 	gl.activeTexture(gl.TEXTURE0);
@@ -220,6 +264,10 @@ window.onload = function() {
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
+	
+	canvas.onmousedown = handleMouseDown;
+	document.onmouseup = handleMouseUp;
+	document.onmousemove = handleMouseMove;
 
 	tick();
 }

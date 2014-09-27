@@ -101,16 +101,32 @@ function initTextures() {
 }
 
 
-
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 
-function setMatrixUniforms() {
+function setMatrixUniforms() 
+{
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 }
 
-
+var model = "models/model.json" ;
+function handleKeyDown(event) {
+	if (String.fromCharCode(event.keyCode) == "S") {
+		if(model == "models/teapot.json")
+		{
+			mat4.identity(zoomMatrix);
+			mat4.translate(zoomMatrix, [0, 0, -10]);
+			model = "models/laptop.json" ;
+		}
+		else
+		{
+			mat4.identity(zoomMatrix);
+			mat4.translate(zoomMatrix, [0, 0, -45]);
+			model = "models/model.json" ;
+		}
+	}
+}
 function degToRad(degrees) 
 {
 	return degrees * Math.PI / 180;
@@ -165,9 +181,9 @@ function handleMouseScroll(event)
 }
 	
 
-function loadModelFromJSON() {
+function loadModelFromJSON(model) {
         var request = new XMLHttpRequest();
-        request.open("GET", "models/model.json");
+        request.open("GET", model);
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 handleLoadedModel(JSON.parse(request.responseText));
@@ -263,6 +279,8 @@ window.onload = function() {
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 	
+	document.onkeydown = handleKeyDown;
+		
 	canvas.onmousedown = handleMouseDown;
 	document.onmouseup = handleMouseUp;
 	document.onmousemove = handleMouseMove;

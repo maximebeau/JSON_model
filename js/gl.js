@@ -73,8 +73,8 @@ function initShaders() {
 
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 	shaderProgram.useTexturesUniform = gl.getUniformLocation(shaderProgram, "uUseTextures");
+		shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 }
 
 
@@ -175,7 +175,7 @@ function handleMouseScroll(event)
 	var evt=window.event || event //equalize event object
     var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta //check for detail first so Opera uses that instead of wheelDelta
 	
-	mat4.translate(zoomMatrix, [0, 0, delta / 120]);
+	mat4.translate(zoomMatrix, [0, 0, delta / 240]);
 	event.preventDefault() ;
 }
 	
@@ -230,7 +230,7 @@ function handleLoadedModel(modelData) {
 	}
 	else
 	{
-		mat4.translate(zoomMatrix, [0, 0, -5]);
+		mat4.translate(zoomMatrix, [0, 0, -4]);
 	}
 }
 	

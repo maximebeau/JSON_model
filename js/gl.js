@@ -118,12 +118,14 @@ function handleKeyDown(event) {
 			mat4.identity(zoomMatrix);
 			mat4.translate(zoomMatrix, [0, 0, -10]);
 			model = "models/laptop.json" ;
+			loadModelFromJSON(model) ;
 		}
 		else
 		{
 			mat4.identity(zoomMatrix);
 			mat4.translate(zoomMatrix, [0, 0, -45]);
 			model = "models/teapot.json" ;
+			loadModelFromJSON(model) ;
 		}
 	}
 }

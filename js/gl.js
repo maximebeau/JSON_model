@@ -115,15 +115,11 @@ function handleKeyDown(event) {
 	if (String.fromCharCode(event.keyCode) == "S") {
 		if(model == "models/teapot.json")
 		{
-			mat4.identity(zoomMatrix);
-			mat4.translate(zoomMatrix, [0, 0, -10]);
 			model = "models/laptop.json" ;
 			loadModelFromJSON(model) ;
 		}
 		else
 		{
-			mat4.identity(zoomMatrix);
-			mat4.translate(zoomMatrix, [0, 0, -45]);
 			model = "models/teapot.json" ;
 			loadModelFromJSON(model) ;
 		}
@@ -173,6 +169,7 @@ function handleMouseMove(event) {
 
 var zoomMatrix = mat4.create();
 mat4.identity(zoomMatrix);
+mat4.translate(zoomMatrix, [0, 0, -45]);
 function handleMouseScroll(event) 
 {    
 	var evt=window.event || event //equalize event object
@@ -223,6 +220,18 @@ function handleLoadedModel(modelData) {
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(modelData.indices), gl.STATIC_DRAW);
 	modelVertexIndexBuffer.itemSize = 1;
 	modelVertexIndexBuffer.numItems = modelData.indices.length;
+	
+	//Move camera 
+	mat4.identity(modelRotationMatrix);
+	mat4.identity(zoomMatrix);
+	if(model == "models/teapot.json")
+	{
+		mat4.translate(zoomMatrix, [0, 0, -5]);
+	}
+	else
+	{
+		mat4.translate(zoomMatrix, [0, 0, -45]);
+	}
 }
 	
 	
@@ -241,7 +250,6 @@ function drawScene()
 	}
 	
 	mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, [0, 0, -45]);
     mat4.multiply(mvMatrix, zoomMatrix);
     mat4.multiply(mvMatrix, modelRotationMatrix);
 

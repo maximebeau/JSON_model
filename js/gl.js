@@ -97,7 +97,7 @@ function initTextures() {
 	metalTexture.image.onload = function () {
 		handleLoadedTexture(metalTexture)
 	}
-	metalTexture.image.src = "textures/wood.jpg";
+	metalTexture.image.src = "textures/metal.jpg";
 }
 
 
@@ -226,11 +226,11 @@ function handleLoadedModel(modelData) {
 	mat4.identity(zoomMatrix);
 	if(model == "models/teapot.json")
 	{
-		mat4.translate(zoomMatrix, [0, 0, -5]);
+		mat4.translate(zoomMatrix, [0, 0, -45]);
 	}
 	else
 	{
-		mat4.translate(zoomMatrix, [0, 0, -45]);
+		mat4.translate(zoomMatrix, [0, 0, -5]);
 	}
 }
 	

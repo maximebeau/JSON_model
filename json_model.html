@@ -11,9 +11,20 @@
 	
 	<script id="shader-fs" type="x-shader/x-fragment">
 		precision mediump float;
+		varying vec2 vTextureCoord;
+		uniform bool uUseTextures;
+		uniform sampler2D uSampler;
 
-		void main(void) {
-			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		void main(void) 
+		{
+			if (uUseTextures) 
+			{
+				gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+			} else 
+			{
+				gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+			}
+			
 		}
 	</script>
 
@@ -22,8 +33,14 @@
 
 		uniform mat4 uMVMatrix;
 		uniform mat4 uPMatrix;
+		attribute vec2 aTextureCoord;
+		uniform mat3 uNMatrix;
 
-		void main(void) {
+    varying vec2 vTextureCoord;
+
+		void main(void) 
+		{
+			vTextureCoord = aTextureCoord;
 			gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 		}
 	</script>

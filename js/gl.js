@@ -67,9 +67,37 @@ function initShaders() {
 
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+	
+	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+	shaderProgram.useTexturesUniform = gl.getUniformLocation(shaderProgram, "uUseTextures");
+}
+
+
+function handleLoadedTexture(texture) {
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+	gl.generateMipmap(gl.TEXTURE_2D);
+
+	gl.bindTexture(gl.TEXTURE_2D, null);
+}
+
+var metalTexture;
+
+function initTextures() {
+	metalTexture = gl.createTexture();
+	metalTexture.image = new Image();
+	metalTexture.image.onload = function () {
+		handleLoadedTexture(metalTexture)
+	}
+	metalTexture.image.src = "textures/metal.jpg";
 }
 
 
@@ -121,11 +149,12 @@ function handleLoadedModel(modelData) {
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(modelData.indices), gl.STATIC_DRAW);
 	modelVertexIndexBuffer.itemSize = 1;
 	modelVertexIndexBuffer.numItems = modelData.indices.length;
-	
-	
 }
 	
-function drawScene() {
+	var modelAngle = 180 ;
+	
+function drawScene() 
+{
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -139,6 +168,15 @@ function drawScene() {
 	}
 	
 	mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, [0, 0, -5]);
+    mat4.rotate(mvMatrix, Math.PI * (modelAngle / 180.0), [-1, 1, 0.5]);
+
+	//Activate and bind textures
+	gl.activeTexture(gl.TEXTURE0);
+	gl.bindTexture(gl.TEXTURE_2D, metalTexture);
+	gl.uniform1i(shaderProgram.samplerUniform, 0);
+	gl.uniform1i(shaderProgram.useTexturesUniform, true);
+	
 	//Bind buffers and set attributes
 	gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexPositionBuffer);
 	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, modelVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -154,9 +192,18 @@ function drawScene() {
 	gl.drawElements(gl.TRIANGLES, modelVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
-function animate() {
+var lastTime = 0;
 
+function animate() {
+	var timeNow = new Date().getTime();
+	if (lastTime != 0) {
+		var elapsed = timeNow - lastTime;
+
+		modelAngle += 0.05 * elapsed;
+	}
+	lastTime = timeNow;
 }
+
 
 function tick() {
 	requestAnimFrame(tick);
@@ -168,6 +215,7 @@ window.onload = function() {
 	var canvas = document.getElementById("canvas_JSON");
 	initGL(canvas);
 	initShaders();
+    initTextures();
 	loadModelFromJSON() ;
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);

@@ -111,7 +111,7 @@ function setMatrixUniforms() {
 
 function loadModelFromJSON() {
         var request = new XMLHttpRequest();
-        request.open("GET", "models/model.json");
+        request.open("GET", "models/teapot.json");
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 handleLoadedModel(JSON.parse(request.responseText));
@@ -168,8 +168,8 @@ function drawScene()
 	}
 	
 	mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, [0, 0, -5]);
-    mat4.rotate(mvMatrix, Math.PI * (modelAngle / 180.0), [-1, 1, 0.5]);
+    mat4.translate(mvMatrix, [0, 0, -45]);
+    mat4.rotate(mvMatrix, Math.PI * (modelAngle / 180.0), [-1, 1, 1]);
 
 	//Activate and bind textures
 	gl.activeTexture(gl.TEXTURE0);

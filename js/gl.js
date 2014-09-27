@@ -110,7 +110,7 @@ function setMatrixUniforms()
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 }
 
-var model = "models/model.json" ;
+var model = "models/teapot.json" ;
 function handleKeyDown(event) {
 	if (String.fromCharCode(event.keyCode) == "S") {
 		if(model == "models/teapot.json")
@@ -123,7 +123,7 @@ function handleKeyDown(event) {
 		{
 			mat4.identity(zoomMatrix);
 			mat4.translate(zoomMatrix, [0, 0, -45]);
-			model = "models/model.json" ;
+			model = "models/teapot.json" ;
 		}
 	}
 }

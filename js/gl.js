@@ -74,8 +74,11 @@ function initShaders() {
 	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
 	gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 
+	//Matrix
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+    shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
+	//Textures
 	shaderProgram.useTexturesUniform = gl.getUniformLocation(shaderProgram, "uUseTextures");
 		shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 }
@@ -111,6 +114,11 @@ function setMatrixUniforms()
 {
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+	
+	var normalMatrix = mat3.create();
+	mat4.toInverseMat3(mvMatrix, normalMatrix);
+	mat3.transpose(normalMatrix);
+	gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
 }
 
 var model = "models/teapot.json" ;
